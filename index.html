@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Лёгкие интерактивные задачи по JavaScript</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f5 100%);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            padding: 2rem 1.5rem;
+            color: #0a2540;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e6f5c, #289672, #2c9f7c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .header p {
+            font-size: 1.05rem;
+            color: #2c5a6b;
+            margin-top: 0.5rem;
+            border-bottom: 2px solid #cbdbe2;
+            display: inline-block;
+            padding-bottom: 0.4rem;
+        }
+
+        /* сетка задач */
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* карточка */
+        .task-card {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(0px);
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 32, 32, 0.12);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #dce9f0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .task-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 40px -16px rgba(27, 85, 78, 0.2);
+        }
+
+        .task-header {
+            padding: 1.2rem 1.5rem 0.5rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            background: #ffffff;
+            border-bottom: 2px solid #e2f0f5;
+        }
+
+        .task-num {
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: #e0f2fe;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            color: #0b5e7e;
+        }
+
+        .task-title {
+            font-weight: 650;
+            font-size: 1.2rem;
+            color: #1e4a5f;
+        }
+
+        .task-question {
+            padding: 1.2rem 1.5rem 0.8rem 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.45;
+            color: #1f5068;
+            background: #fefefe;
+            border-bottom: 1px dashed #d4e3ec;
+        }
+
+        .question-text {
+            background: #eef4fa;
+            padding: 0.7rem 0.9rem;
+            border-radius: 18px;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.85rem;
+            color: #044e6c;
+            margin-top: 0.5rem;
+            border-left: 4px solid #289672;
+        }
+
+        .code-hint {
+            font-size: 0.75rem;
+            color: #547c8b;
+            margin-top: 0.6rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-weight: 500;
+        }
+
+        .code-hint span {
+            background: #eef2f8;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            transition: 0.1s;
+        }
+
+        .code-hint:hover span {
+            background: #cde1ed;
+        }
+
+        .hidden-hint {
+            display: none;
+            background: #f8fbfe;
+            font-family: monospace;
+            padding: 0.6rem;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: #115e6e;
+            border: 1px solid #caddf0;
+        }
+
+        .task-actions {
+            padding: 1rem 1.5rem 1.4rem 1.5rem;
+            background: white;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
+            border-top: 1px solid #eaf0f5;
+        }
+
+        .answer-input {
+            flex: 2;
+            padding: 0.7rem 1rem;
+            border-radius: 60px;
+            border: 2px solid #caddf0;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            background: white;
+        }
+
+        .answer-input:focus {
+            border-color: #289672;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(40, 150, 114, 0.2);
+        }
+
+        .check-btn {
+            background: #1e6f5c;
+            border: none;
+            color: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .check-btn:hover {
+            background: #0f5b4a;
+            transform: scale(0.97);
+        }
+
+        .feedback {
+            width: 100%;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 28px;
+            font-weight: 500;
+            background: #f9fafc;
+        }
+
+        .feedback.success {
+            color: #0f6e3f;
+            background: #e3f7ec;
+            border-left: 3px solid #2c9f7c;
+        }
+
+        .feedback.error {
+            color: #bc3f2e;
+            background: #ffe9e6;
+            border-left: 3px solid #e65c4f;
+        }
+
+        .reset-area {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .reset-btn {
+            background: white;
+            border: 1.5px solid #c6d9e6;
+            padding: 0.7rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            color: #2c6a5c;
+        }
+
+        .reset-btn:hover {
+            background: #e2f0ea;
+            border-color: #289672;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: #5e8596;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>✨ Лёгкий JS-тренажёр</h1>
+        <p>напиши код — получи мгновенную обратную связь</p>
+    </div>
+
+    <div class="tasks-grid" id="tasksGrid"></div>
+    <div class="reset-area">
+        <button class="reset-btn" id="globalResetBtn">⟳ Сбросить все ответы и прогресс</button>
+    </div>
+    <footer>⚡ Задачи на реальный код. Пиши в любом стиле (function / const / let). Главное — чтобы работало!</footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // СПИСОК ЗАДАЧ (легкие, с гибкой проверкой)
+    // --------------------------------------------------------------
+    const tasks = [
+        {
+            title: "📦 Переменная и вывод",
+            question: "Объяви переменную <code>city</code> со значением <code>'Москва'</code> и выведи её в консоль с помощью <code>console.log</code>.",
+            hint: "let city = 'Москва'; console.log(city);",
+            validator: (answer) => {
+                let norm = answer.toLowerCase().replace(/\s+/g, '').replace(/["']/g, "'");
+                // ищем объявление переменной (var/let/const) и console.log с city
+                let hasDecl = /(let|const|var)city='москва'/.test(norm);
+                let hasLog = /console\.log\(city\)/.test(norm);
+                return hasDecl && hasLog;
+            }
+        },
+        {
+            title: "➕ Функция суммы",
+            question: "Напиши функцию <code>sum(a, b)</code>, которая возвращает результат сложения a и b. (Любой синтаксис: function declaration или стрелочная).",
+            hint: "function sum(a, b) { return a + b; }   или   const sum = (a,b) => a+b;",
+            validator: (answer) => {
+                let norm = answer.toLowerCase().replace(/\s+/g, '');
+                // Проверяем наличие функции sum и возврат суммы
+                let arrowPattern = /constsum=\([a-z]+,[a-z]+\)=>[a-z]+\+[a-z]+/;
+                let funcPattern = /functionsum\([a-z]+,[a-z]+\){return[a-z]+\+[a-z]+}/;
+                let altPattern = /functionsum\([a-z]+\s*,\s*[a-z]+\)\s*\{\s*return\s+[a-z]+\s*\+\s*[a-z]+\s*\}/i;
+                if (arrowPattern.test(norm) || funcPattern.test(norm) || altPattern.test(norm)) return true;
+                // также допустим: const sum = (x,y) => x+y
+                if (/constsum=\([^)]+\)=>[^+]+ \+ [^)]+/.test(norm)) return true;
+                return false;
+            }
+        },
+        {
+            title: "🔢 Чёт / Нечет",
+            question: "Напиши условие (if/else), которое проверяет переменную <code>num</code>. Если число чётное — выведи <code>'чётное'</code>, иначе <code>'нечётное'</code>. Используй console.log.",
+            hint: "if (num % 2 === 0) { console.log('чётное'); } else { console.log('нечётное'); }",
+            validator: (answer) => {
+                let norm = answer.toLowerCase().replace(/\s+/g, '');
+                let hasIf = /if\(num%\s*2===0\)/.test(norm) || /if\(num%2==0\)/.test(norm);
+                let hasLogEven = norm.includes("console.log('чётное')") || norm.includes('console.log("чётное")') || norm.includes("console.log('четное')");
+                let hasLogOdd = norm.includes("console.log('нечётное')") || norm.includes('console.log("нечётное")') || norm.includes("console.log('нечетное')");
+                let hasElse = norm.includes('else');
+                return hasIf && hasLogEven && hasLogOdd && hasElse;
+            }
+        },
+        {
+            title: "🍎 Массив и индекс",
+            question: "Создай массив <code>colors</code> с тремя цветами: <code>'красный'</code>, <code>'синий'</code>, <code>'зелёный'</code>. Затем выведи в консоль второй элемент массива (индекс 1).",
+            hint: "let colors = ['красный', 'синий', 'зелёный']; console.log(colors[1]);",
+            validator: (answer) => {
+                let norm = answer.toLowerCase().replace(/\s+/g, '').replace(/["']/g, "'");
+                // проверка объявления массива с тремя элементами (примерно)
+                let hasArray = /(let|const|var)colors=\[['"]красный['"],['"]синий['"],['"]зелёный['"]\]/.test(norm);
+                let hasConsoleIndex = /console\.log\(colors\[1\]\)/.test(norm);
+                // чуть гибче: допускаем порядок любой, но ключевые слова
+                let altArray = /colors=\[.*красный.*синий.*зелёный.*\]/.test(norm);
+                return (hasArray || altArray) && hasConsoleIndex;
+            }
+        },
+        {
+            title: "🔄 Цикл for (1 до 3)",
+            question: "Напиши цикл <code>for</code>, который выводит в консоль числа от 1 до 3 включительно (каждое с новой строки).",
+            hint: "for (let i = 1; i <= 3; i++) { console.log(i); }",
+            validator: (answer) => {
+                let norm = answer.toLowerCase().replace(/\s+/g, '');
+                let hasFor = /for\(leti=1;/.test(norm);
+                let conditionOk = /i<=3/.test(norm) || /i<4/.test(norm);
+                let hasLog = /console\.log\(i\)/.test(norm);
+                return hasFor && conditionOk && hasLog;
+            }
+        },
+        {
+            title: "🧑 Объект и свойство",
+            question: "Создай объект <code>book</code> с полями: <code>title: 'JavaScript'</code>, <code>pages: 250</code>. Затем выведи значение свойства <code>pages</code> в консоль.",
+            hint: "let book = { title: 'JavaScript', pages: 250 }; console.log(book.pages);",
+            validator: (answer) => {
+                let norm = answer.toLowerCase().replace(/\s+/g, '').replace(/["']/g, "'");
+                let hasObj = /(let|const|var)book=\{title:'javascript',pages:250\}/.test(norm);
+                let hasAlt = /book=\{.*pages:250.*\}/.test(norm);
+                let hasConsole = /console\.log\(book\.pages\)/.test(norm);
+                return (hasObj || hasAlt) && hasConsole;
+            }
+        },
+        {
+            title: "🔁 Удвоение через функцию",
+            question: "Объяви функцию <code>double(n)</code>, которая возвращает число, умноженное на 2. (Пример вызова: double(5) → 10).",
+            hint: "function double(n) { return n * 2; }   или   const double = n => n * 2;",
+            validator: (answer) => {
+                let norm = answer.toLowerCase().replace(/\s+/g, '');
+                let arrow = /constdouble=[a-z]=>[a-z]*\*2/.test(norm);
+                let funcDec = /functiondouble\([a-z]+\){return[a-z]+\*2}/.test(norm);
+                let funcAlt = /function\s+double\s*\([^)]+\)\s*\{\s*return\s+[a-z0-9_]+\s*\*\s*2\s*\}/i.test(answer);
+                return arrow || funcDec || funcAlt;
+            }
+        },
+        {
+            title: "📐 Шаблонная строка",
+            question: "Даны переменные <code>firstName = 'Иван'</code> и <code>lastName = 'Петров'</code>. Используя шаблонную строку, выведи фразу <code>'Привет, Иван Петров!'</code> в консоль.",
+            hint: "let firstName = 'Иван'; let lastName = 'Петров'; console.log(`Привет, ${firstName} ${lastName}!`);",
+            validator: (answer) => {
+                let norm = answer.toLowerCase().replace(/\s+/g, '').replace(/["']/g, "'");
+                let hasVars = /(let|const)firstname='иван'/.test(norm) && /(let|const)lastname='петров'/.test(norm);
+                let hasTemplate = /console\.log\(`привет,\s*\$\{firstname\}\s*\$\{lastname\}!`\)/.test(norm) ||
+                                  /console\.log\(`привет, \${firstname} \${lastname}!`\)/.test(norm);
+                return hasVars && hasTemplate;
+            }
+        }
+    ];
+
+    // ---------- вспомогательная функция для сохранения ----------
+    function saveTaskState(taskId, answer, status) {
+        localStorage.setItem(`js_task_ans_${taskId}`, answer);
+        localStorage.setItem(`js_task_status_${taskId}`, status);
+    }
+
+    function loadTaskState(taskId) {
+        const answer = localStorage.getItem(`js_task_ans_${taskId}`) || '';
+        const status = localStorage.getItem(`js_task_status_${taskId}`) || null;
+        return { answer, status };
+    }
+
+    // отрисовка всех карточек
+    function renderTasks() {
+        const grid = document.getElementById('tasksGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        tasks.forEach((task, idx) => {
+            const saved = loadTaskState(idx);
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.dataset.id = idx;
+
+            // header
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'task-header';
+            headerDiv.innerHTML = `
+                <div class="task-num">#${idx+1}</div>
+                <div class="task-title">${task.title}</div>
+            `;
+
+            // question area
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'task-question';
+            questionDiv.innerHTML = `
+                <div>${task.question}</div>
+                <button class="code-hint" data-idx="${idx}">💡 <span>Показать подсказку</span></button>
+                <div class="hidden-hint" id="hint-${idx}">${task.hint}</div>
+            `;
+
+            // input + button + feedback
+            const actionDiv = document.createElement('div');
+            actionDiv.className = 'task-actions';
+
+            const inputField = document.createElement('input');
+            inputField.type = 'text';
+            inputField.placeholder = 'Введи JS код...';
+            inputField.className = 'answer-input';
+            inputField.value = saved.answer;
+
+            const checkBtn = document.createElement('button');
+            checkBtn.className = 'check-btn';
+            checkBtn.innerHTML = '✓ Проверить';
+
+            const feedbackDiv = document.createElement('div');
+            feedbackDiv.className = 'feedback';
+            if (saved.status === 'success') {
+                feedbackDiv.innerHTML = '✅ Всё верно! Молодец!';
+                feedbackDiv.classList.add('success');
+            } else if (saved.status === 'error') {
+                feedbackDiv.innerHTML = '❌ Неправильно. Попробуй ещё (посмотри подсказку).';
+                feedbackDiv.classList.add('error');
+            } else {
+                feedbackDiv.innerHTML = '📝 Напиши решение и нажми «Проверить»';
+            }
+
+            actionDiv.appendChild(inputField);
+            actionDiv.appendChild(checkBtn);
+            actionDiv.appendChild(feedbackDiv);
+            card.appendChild(headerDiv);
+            card.appendChild(questionDiv);
+            card.appendChild(actionDiv);
+            grid.appendChild(card);
+
+            // обработчик подсказки
+            const hintBtn = questionDiv.querySelector('.code-hint');
+            const hintBox = document.getElementById(`hint-${idx}`);
+            hintBtn.addEventListener('click', () => {
+                if (hintBox.style.display === 'none' || !hintBox.style.display) {
+                    hintBox.style.display = 'block';
+                } else {
+                    hintBox.style.display = 'none';
+                }
+            });
+            if (hintBox) hintBox.style.display = 'none';
+
+            // проверка ответа
+            checkBtn.addEventListener('click', () => {
+                const userAnswer = inputField.value.trim();
+                if (userAnswer === "") {
+                    feedbackDiv.innerHTML = '⚠️ Введи код в поле';
+                    feedbackDiv.classList.remove('success', 'error');
+                    return;
+                }
+                const isValid = task.validator(userAnswer);
+                if (isValid) {
+                    feedbackDiv.innerHTML = '✅ Отлично! Решение засчитано! 🎉';
+                    feedbackDiv.classList.add('success');
+                    feedbackDiv.classList.remove('error');
+                    saveTaskState(idx, userAnswer, 'success');
+                } else {
+                    feedbackDiv.innerHTML = '❌ Неверно. Проверь синтаксис или используй подсказку.';
+                    feedbackDiv.classList.add('error');
+                    feedbackDiv.classList.remove('success');
+                    saveTaskState(idx, userAnswer, 'error');
+                }
+            });
+
+            // при ручном изменении сбрасываем статус ошибки/успеха, если пользователь меняет поле
+            inputField.addEventListener('input', () => {
+                const currentStatus = localStorage.getItem(`js_task_status_${idx}`);
+                if (currentStatus === 'success' || currentStatus === 'error') {
+                    localStorage.removeItem(`js_task_status_${idx}`);
+                    feedbackDiv.innerHTML = '📝 Ответ изменён, проверь заново.';
+                    feedbackDiv.classList.remove('success', 'error');
+                }
+            });
+        });
+    }
+
+    // глобальный сброс
+    function resetAllProgress() {
+        for (let i = 0; i < tasks.length; i++) {
+            localStorage.removeItem(`js_task_ans_${i}`);
+            localStorage.removeItem(`js_task_status_${i}`);
+        }
+        renderTasks();  // перерисовываем всё заново
+    }
+
+    // инициализация
+    renderTasks();
+    const resetBtn = document.getElementById('globalResetBtn');
+    if (resetBtn) resetBtn.addEventListener('click', resetAllProgress);
+</script>
+</body>
+</html>
